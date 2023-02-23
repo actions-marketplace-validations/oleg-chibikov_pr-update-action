@@ -42,10 +42,10 @@ async function run() {
     }
 
     const runConditionRegexString = inputs.runConditionRegex.trim();
-    const runConditionRegex = runConditionRegexString.length ? new RegExp(runConditionRegexString): null;
+    const runConditionRegex = runConditionRegexString.length ? new RegExp(runConditionRegexString, 'i'): null;
 
     const skipConditionRegexString = inputs.skipConditionRegex.trim();
-    const skipConditionRegex = skipConditionRegexString.length ? new RegExp(skipConditionRegexString): null;
+    const skipConditionRegex = skipConditionRegexString.length ? new RegExp(skipConditionRegexString, 'i'): null;
 
     const checkShouldRun = (branchName) => {     
       if (runConditionRegex) {
@@ -65,11 +65,11 @@ async function run() {
 
     if (matchBaseBranch) {
       const baseBranchName = github.context.payload.pull_request.base.ref;
-      const baseBranch = inputs.lowercaseBranch ? baseBranchName.toLowerCase() : baseBranchName;
-      core.info(`Base branch: ${baseBranch}`);
-      if (!checkShouldRun(baseBranch)){
+      if (!checkShouldRun(baseBranchName)){
         return;
       }
+      const baseBranch = inputs.lowercaseBranch ? baseBranchName.toLowerCase() : baseBranchName;
+      core.info(`Base branch: ${baseBranch}`);
 
       const baseMatches = baseBranch.match(new RegExp(baseBranchRegex));
       if (!baseMatches) {
@@ -85,11 +85,11 @@ async function run() {
 
     if (matchHeadBranch) {
       const headBranchName = github.context.payload.pull_request.head.ref;
-      const headBranch = inputs.lowercaseBranch ? headBranchName.toLowerCase() : headBranchName;
-      core.info(`Head branch: ${headBranch}`);
-      if (!checkShouldRun(headBranch)){
+      if (!checkShouldRun(headBranchName)){
         return;
       }
+      const headBranch = inputs.lowercaseBranch ? headBranchName.toLowerCase() : headBranchName;
+      core.info(`Head branch: ${headBranch}`);
 
       const headMatches = headBranch.match(new RegExp(headBranchRegex));
       if (!headMatches) {
