@@ -17,6 +17,7 @@ Create a workflow yaml file (for e.g. `.github/workflows/update-pr.yml`). See [C
 #### Optional
 - `base-branch-regex`: regex to match text from the base branch name
 - `head-branch-regex`: regex to match text from the head branch name
+- `run-condition-regex`: regex to match text in any of two above branches. If the branch regex is specified and this regex doesn't match the branch name, the action gets cancelled
 - `lowercase-branch`: whether to lowercase branch name before matching (default: `true`)
 - `title-template`: text template to update title with
 - `title-update-action`: whether to prefix or suffix or replace title with title-template (default: `prefix`)

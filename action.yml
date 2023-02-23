@@ -16,6 +16,10 @@ inputs:
     description: "Regex to match text in the head branch name"
     required: false
     default: ""
+  run-condition-regex:
+    description: "Regex to match text in any of two above branches. If the branch regex is specified and this regex doesn't match the branch name, the action gets cancelled"
+    required: false
+    default: ""
   lowercase-branch:
     description: "Should lowercase branch name before matching text"
     required: false

@@ -10,6 +10,7 @@ async function run() {
       token: core.getInput('repo-token', {required: true}),
       baseBranchRegex: core.getInput('base-branch-regex'),
       headBranchRegex: core.getInput('head-branch-regex'),
+      runConditionRegex: core.getInput('run-condition-regex'),
       lowercaseBranch: (core.getInput('lowercase-branch').toLowerCase() === 'true'),
       titleTemplate: core.getInput('title-template'),
       titleUpdateAction: core.getInput('title-update-action').toLowerCase(),
@@ -39,10 +40,27 @@ async function run() {
       headMatch: '',
     }
 
+    const runConditionRegexString = inputs.runConditionRegex.trim();
+    const runConditionRegex = runConditionRegexString.length ? new RegExp(runConditionRegexString): null;
+
+    const checkShouldRun = (branchName) => {     
+      if (!runConditionRegex) {
+        return true;
+      }
+
+      const shouldRun = branchName.match(runConditionRegex);
+      core.info(`${branchName} should be processed: ${branchName}. Regex: ${runConditionRegexString}`);
+
+      return shouldRun;
+    }
+
     if (matchBaseBranch) {
       const baseBranchName = github.context.payload.pull_request.base.ref;
       const baseBranch = inputs.lowercaseBranch ? baseBranchName.toLowerCase() : baseBranchName;
       core.info(`Base branch: ${baseBranch}`);
+      if (!checkShouldRun(baseBranch)){
+        return;
+      }
 
       const baseMatches = baseBranch.match(new RegExp(baseBranchRegex));
       if (!baseMatches) {
@@ -60,6 +78,9 @@ async function run() {
       const headBranchName = github.context.payload.pull_request.head.ref;
       const headBranch = inputs.lowercaseBranch ? headBranchName.toLowerCase() : headBranchName;
       core.info(`Head branch: ${headBranch}`);
+      if (!checkShouldRun(headBranch)){
+        return;
+      }
 
       const headMatches = headBranch.match(new RegExp(headBranchRegex));
       if (!headMatches) {
