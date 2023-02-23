@@ -20,6 +20,10 @@ inputs:
     description: "Regex to match text in any of two above branches. If the branch regex is specified and this regex doesn't match the branch name, the action gets cancelled"
     required: false
     default: ""
+  skip-condition-regex:
+    description: "Regex to match text in any of two above branches. If the branch regex is specified and this regex matches the branch name, the action gets cancelled"
+    required: false
+    default: ""
   lowercase-branch:
     description: "Should lowercase branch name before matching text"
     required: false

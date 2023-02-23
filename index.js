@@ -11,6 +11,7 @@ async function run() {
       baseBranchRegex: core.getInput('base-branch-regex'),
       headBranchRegex: core.getInput('head-branch-regex'),
       runConditionRegex: core.getInput('run-condition-regex'),
+      skipConditionRegex: core.getInput('skip-condition-regex'),
       lowercaseBranch: (core.getInput('lowercase-branch').toLowerCase() === 'true'),
       titleTemplate: core.getInput('title-template'),
       titleUpdateAction: core.getInput('title-update-action').toLowerCase(),
@@ -43,15 +44,23 @@ async function run() {
     const runConditionRegexString = inputs.runConditionRegex.trim();
     const runConditionRegex = runConditionRegexString.length ? new RegExp(runConditionRegexString): null;
 
+    const skipConditionRegexString = inputs.skipConditionRegex.trim();
+    const skipConditionRegex = skipConditionRegexString.length ? new RegExp(skipConditionRegexString): null;
+
     const checkShouldRun = (branchName) => {     
-      if (!runConditionRegex) {
-        return true;
+      if (runConditionRegex) {
+        const shouldRun = branchName.match(runConditionRegex);
+        core.info(`RunConditionRegex: ${runConditionRegexString}: ${branchName} should be processed: ${shouldRun}.`);
+        return shouldRun;
       }
 
-      const shouldRun = branchName.match(runConditionRegex);
-      core.info(`${branchName} should be processed: ${branchName}. Regex: ${runConditionRegexString}`);
+      if (skipConditionRegex) {
+        const shouldSkip = branchName.match(skipConditionRegex);
+        core.info(`SkipConditionRegex: ${skipConditionRegexString}: ${branchName} should be processed: ${shouldSkip}.`);
+        return !shouldSkip;
+      }
 
-      return shouldRun;
+      return true;
     }
 
     if (matchBaseBranch) {
