@@ -25,6 +25,34 @@ async function run() {
       bodyUppercaseHeadMatch: (core.getInput('body-uppercase-head-match').toLowerCase() === 'true'),
     }
 
+    const prTitle = github.context.payload.pull_request.title;
+
+    const runConditionRegexString = inputs.runConditionRegex.trim();
+    const runConditionRegex = runConditionRegexString.length ? new RegExp(runConditionRegexString, 'i'): null;
+
+    const skipConditionRegexString = inputs.skipConditionRegex.trim();
+    const skipConditionRegex = skipConditionRegexString.length ? new RegExp(skipConditionRegexString, 'i'): null;
+
+    const checkShouldRun = (title) => {     
+      if (runConditionRegex) {
+        const shouldRun = title.match(runConditionRegex);
+        core.info(`RunConditionRegex: ${runConditionRegexString}: ${title} should be processed: ${shouldRun}.`);
+        return shouldRun;
+      }
+
+      if (skipConditionRegex) {
+        const shouldSkip = title.match(skipConditionRegex);
+        core.info(`SkipConditionRegex: ${skipConditionRegexString}: ${title} should be processed: ${shouldSkip}.`);
+        return !shouldSkip;
+      }
+
+      return true;
+    }     
+    
+    if (!checkShouldRun(prTitle)){
+      return;
+    }
+
     const baseBranchRegex = inputs.baseBranchRegex.trim();
     const matchBaseBranch = baseBranchRegex.length > 0;
 
@@ -41,33 +69,8 @@ async function run() {
       headMatch: '',
     }
 
-    const runConditionRegexString = inputs.runConditionRegex.trim();
-    const runConditionRegex = runConditionRegexString.length ? new RegExp(runConditionRegexString, 'i'): null;
-
-    const skipConditionRegexString = inputs.skipConditionRegex.trim();
-    const skipConditionRegex = skipConditionRegexString.length ? new RegExp(skipConditionRegexString, 'i'): null;
-
-    const checkShouldRun = (branchName) => {     
-      if (runConditionRegex) {
-        const shouldRun = branchName.match(runConditionRegex);
-        core.info(`RunConditionRegex: ${runConditionRegexString}: ${branchName} should be processed: ${shouldRun}.`);
-        return shouldRun;
-      }
-
-      if (skipConditionRegex) {
-        const shouldSkip = branchName.match(skipConditionRegex);
-        core.info(`SkipConditionRegex: ${skipConditionRegexString}: ${branchName} should be processed: ${shouldSkip}.`);
-        return !shouldSkip;
-      }
-
-      return true;
-    }
-
     if (matchBaseBranch) {
       const baseBranchName = github.context.payload.pull_request.base.ref;
-      if (!checkShouldRun(baseBranchName)){
-        return;
-      }
       const baseBranch = inputs.lowercaseBranch ? baseBranchName.toLowerCase() : baseBranchName;
       core.info(`Base branch: ${baseBranch}`);
 
@@ -85,9 +88,6 @@ async function run() {
 
     if (matchHeadBranch) {
       const headBranchName = github.context.payload.pull_request.head.ref;
-      if (!checkShouldRun(headBranchName)){
-        return;
-      }
       const headBranch = inputs.lowercaseBranch ? headBranchName.toLowerCase() : headBranchName;
       core.info(`Head branch: ${headBranch}`);
 
