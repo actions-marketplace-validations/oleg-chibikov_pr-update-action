@@ -1,6 +1,6 @@
 {
   "name": "pr-update-action",
-  "version": "2.0.0",
+  "version": "1.0.0",
   "description": "PR Update GitHub Action",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tzkhan/pr-update-action.git"
+    "url": "git+https://github.com/oleg-chibikov/pr-update-action.git"
   },
   "keywords": [
     "GitHub",
@@ -20,9 +20,9 @@
   "author": "Tamim Khan",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/tzkhan/pr-update-action/issues"
+    "url": "https://github.com/oleg-chibikov/pr-update-action/issues"
   },
-  "homepage": "https://github.com/tzkhan/pr-update-action/#readme",
+  "homepage": "https://github.com/oleg-chibikov/pr-update-action/#readme",
   "dependencies": {
     "@actions/core": "^1.2.6",
     "@actions/github": "^4.0.0"
