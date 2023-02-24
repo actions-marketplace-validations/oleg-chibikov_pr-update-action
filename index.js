@@ -74,7 +74,7 @@ async function run() {
 
     const removeBranchNameFromTitle = (branchName) => {
       if (inputs.removeBranchNameFromTitle){
-        const branchNameRegex = new RegExp('[ \t]*[' + branchName + '|' + branchName.replace('-','') + '|' + branchName.replace('-',' ') + '][ \t]*', 'i');
+        const branchNameRegex = new RegExp('[ \t]*(?:' + branchName + '|' + branchName.replace('-','') + '|' + branchName.replace('-',' ') + ')[ \t]*', 'i');
         if (title.match(branchNameRegex))
         {
           const oldTitle = title;
