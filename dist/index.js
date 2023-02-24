@@ -5953,6 +5953,7 @@ async function run() {
       runConditionRegex: core.getInput('run-condition-regex'),
       skipConditionRegex: core.getInput('skip-condition-regex'),
       removeRunConditionMatch: (core.getInput('remove-run-condition-match').toLowerCase() === 'true'),
+      removeBranchNameFromTitle: (core.getInput('remove-branch-name-from-title').toLowerCase() === 'true'),
       lowercaseBranch: (core.getInput('lowercase-branch').toLowerCase() === 'true'),
       titleTemplate: core.getInput('title-template'),
       titleUpdateAction: core.getInput('title-update-action').toLowerCase(),
@@ -6011,6 +6012,18 @@ async function run() {
       headMatch: '',
     }
 
+    const removeBranchNameFromTitle = (branchName) => {
+      if (inputs.removeBranchNameFromTitle){
+        const branchNameRegex = new RegExp('[ \t]*' + branchName + '[ \t]*', 'i');
+        if (title.match(branchNameRegex))
+        {
+          const oldTitle = title;
+          title = title.replace(branchNameRegex, '')
+          core.info(`Removed '${branchName}' from '${oldTitle}'. New title: '${title}'`);
+        }
+      }
+    }
+
     if (matchBaseBranch) {
       const baseBranchName = github.context.payload.pull_request.base.ref;
       const baseBranch = inputs.lowercaseBranch ? baseBranchName.toLowerCase() : baseBranchName;
@@ -6021,6 +6034,8 @@ async function run() {
         core.setFailed('Base branch name does not match given regex');
         return;
       }
+
+      removeBranchNameFromTitle(baseBranch);
 
       matches.baseMatch = baseMatches[0];
       core.info(`Matched base branch text: ${matches.baseMatch}`);
@@ -6039,11 +6054,19 @@ async function run() {
         return;
       }
 
+      removeBranchNameFromTitle(headBranch);
+
       matches.headMatch = headMatches[0];
       core.info(`Matched head branch text: ${matches.headMatch}`);
 
       core.setOutput('headMatch', matches.headMatch);
     }
+
+    const capitalizeFirstLetter = (string) => {
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    title = capitalizeFirstLetter(title);
 
     const request = {
       owner: github.context.repo.owner,

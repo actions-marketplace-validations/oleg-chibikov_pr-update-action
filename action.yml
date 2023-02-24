@@ -28,6 +28,10 @@ inputs:
     description: "Indicates whether to remove the match of run-condition-regex from title"
     required: false
     default: "false"
+  remove-branch-name-from-title:
+    description: "Indicates whether to remove the existing branch name and surrounding whitespace from title"
+    required: false
+    default: "false"
   lowercase-branch:
     description: "Should lowercase branch name before matching text"
     required: false
