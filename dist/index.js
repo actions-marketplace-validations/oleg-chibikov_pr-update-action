@@ -6021,6 +6021,9 @@ async function run() {
           title = title.replace(branchNameRegex, '')
           core.info(`Removed '${branchName}' from '${oldTitle}'. New title: '${title}'`);
         }
+        else {
+          core.info(`'${branchName}' isn't specified in '${title}'. Leaving it intact`);
+        }
       }
     }
 
