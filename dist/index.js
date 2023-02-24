@@ -6038,10 +6038,10 @@ async function run() {
         return;
       }
 
-      removeBranchNameFromTitle(baseBranch);
-
       matches.baseMatch = baseMatches[0];
       core.info(`Matched base branch text: ${matches.baseMatch}`);
+
+      removeBranchNameFromTitle(matches.baseMatch);
 
       core.setOutput('baseMatch', matches.baseMatch);
     }
@@ -6057,10 +6057,10 @@ async function run() {
         return;
       }
 
-      removeBranchNameFromTitle(headBranch);
-
       matches.headMatch = headMatches[0];
       core.info(`Matched head branch text: ${matches.headMatch}`);
+
+      removeBranchNameFromTitle(matches.headMatch);
 
       core.setOutput('headMatch', matches.headMatch);
     }
