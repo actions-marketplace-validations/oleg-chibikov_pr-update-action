@@ -17,11 +17,11 @@ inputs:
     required: false
     default: ""
   run-condition-regex:
-    description: "Regex to match text in any of two above branches. If the branch regex is specified and this regex doesn't match the branch name, the action gets cancelled"
+    description: "Regex to match text in PR title. The actions runs only if title matches the regex"
     required: false
     default: ""
   skip-condition-regex:
-    description: "Regex to match text in any of two above branches. If the branch regex is specified and this regex matches the branch name, the action gets cancelled"
+    description: "Regex to match text in PR title. The actions runs only if title doesn't match the regex"
     required: false
     default: ""
   lowercase-branch:
