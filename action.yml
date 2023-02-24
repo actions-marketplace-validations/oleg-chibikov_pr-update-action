@@ -24,6 +24,10 @@ inputs:
     description: "Regex to match text in PR title. The actions runs only if title doesn't match the regex"
     required: false
     default: ""
+  remove-run-condition-match:
+    description: "Indicates whether to remove the match of run-condition-regex from title"
+    required: false
+    default: "false"
   lowercase-branch:
     description: "Should lowercase branch name before matching text"
     required: false

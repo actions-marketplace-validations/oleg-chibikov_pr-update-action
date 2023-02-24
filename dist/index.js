@@ -5952,6 +5952,7 @@ async function run() {
       headBranchRegex: core.getInput('head-branch-regex'),
       runConditionRegex: core.getInput('run-condition-regex'),
       skipConditionRegex: core.getInput('skip-condition-regex'),
+      removeRunConditionMatch: (core.getInput('remove-run-condition-match').toLowerCase() === 'true'),
       lowercaseBranch: (core.getInput('lowercase-branch').toLowerCase() === 'true'),
       titleTemplate: core.getInput('title-template'),
       titleUpdateAction: core.getInput('title-update-action').toLowerCase(),
@@ -5965,7 +5966,7 @@ async function run() {
       bodyUppercaseHeadMatch: (core.getInput('body-uppercase-head-match').toLowerCase() === 'true'),
     }
 
-    const prTitle = github.context.payload.pull_request.title;
+    let title = github.context.payload.pull_request.title || '';
 
     const runConditionRegexString = inputs.runConditionRegex.trim();
     const runConditionRegex = runConditionRegexString.length ? new RegExp(runConditionRegexString, 'i'): null;
@@ -5973,24 +5974,25 @@ async function run() {
     const skipConditionRegexString = inputs.skipConditionRegex.trim();
     const skipConditionRegex = skipConditionRegexString.length ? new RegExp(skipConditionRegexString, 'i'): null;
 
-    const checkShouldRun = (title) => {     
-      if (runConditionRegex) {
-        const shouldRun = title.match(runConditionRegex);
-        core.info(`RunConditionRegex: ${runConditionRegexString}: ${title} should be processed: ${shouldRun}.`);
-        return shouldRun;
+    if (runConditionRegex) {
+      const shouldRun = title.match(runConditionRegex);
+      if (!shouldRun) {
+        core.info(`RunConditionRegex: '${runConditionRegexString}': '${title}' processing should be skipped`);
+        return;
       }
-
-      if (skipConditionRegex) {
-        const shouldSkip = title.match(skipConditionRegex);
-        core.info(`SkipConditionRegex: ${skipConditionRegexString}: ${title} should be processed: ${shouldSkip}.`);
-        return !shouldSkip;
+      else if (inputs.removeRunConditionMatch) {
+        const oldTitle = title;
+        title = title.replace(runConditionRegex, '')
+        core.info(`Removed run condition match: '${runConditionRegexString}' from '${oldTitle}'. New title: '${title}'`);
       }
+    }
 
-      return true;
-    }     
-    
-    if (!checkShouldRun(prTitle)){
-      return;
+    if (skipConditionRegex) {
+      const shouldSkip = title.match(skipConditionRegex);
+      if (shouldSkip) {
+        core.info(`SkipConditionRegex: '${skipConditionRegexString}': '${title}' processing should be skipped`);
+        return;
+      }
     }
 
     const baseBranchRegex = inputs.baseBranchRegex.trim();
@@ -6051,7 +6053,6 @@ async function run() {
 
     const upperCase = (upperCase, text) => upperCase ? text.toUpperCase() : text;
 
-    const title = github.context.payload.pull_request.title || '';
     const processedTitleText = inputs.titleTemplate
       .replace(baseTokenRegex, upperCase(inputs.titleUppercaseBaseMatch, matches.baseMatch))
       .replace(headTokenRegex, upperCase(inputs.titleUppercaseHeadMatch, matches.headMatch));
