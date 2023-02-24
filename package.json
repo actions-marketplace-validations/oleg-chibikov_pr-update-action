@@ -17,7 +17,7 @@
     "Actions",
     "PullRequest"
   ],
-  "author": "Tamim Khan",
+  "author": "Tamim Khan & Oleg Chibikov",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/oleg-chibikov/pr-update-action/issues"
